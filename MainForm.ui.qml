@@ -9,6 +9,14 @@ Rectangle {
     MouseArea {
         id: mouseArea
         anchors.fill: parent
+
+        Text {
+            id: text1
+            x: 88
+            y: 68
+            text: qsTr("Text")
+            font.pixelSize: 12
+        }
     }
 
     Text {

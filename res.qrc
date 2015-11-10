@@ -1,2 +1,6 @@
-<RCC/>
-
+<RCC>
+    <qresource prefix="/">
+        <file>NaturalScene2.jpg</file>
+        <file>beautifulScene.jpg</file>
+    </qresource>
+</RCC>
