@@ -14,8 +14,8 @@ class PictureURL : public QObject
     Q_OBJECT
 public:
     explicit PictureURL(QObject *parent = 0);
-    Q_INVOKABLE QString Select_picture_URL();
-    Q_INVOKABLE bool Is_Same_pictures();
+    Q_INVOKABLE QString select_picture_URL();
+    Q_INVOKABLE bool is_same_pictures();
 
 
 private:

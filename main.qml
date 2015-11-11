@@ -4,73 +4,88 @@ import QtQuick.Window 2.2
 Window {
     visible: true
 
-    property int k : 0
 
-    Image {
-        id: image1
-        x: 50; y:50
-        width: 50; height: 50
-        fillMode: Image.PreserveAspectFit
-        source: pictureUrl.Select_picture_URL()
-    }
+    MainForm {
+        id: mainForm1
 
-    Image {
-        id: image2
-        x: 100; y:50
-        width: 50; height: 50
-        fillMode: Image.PreserveAspectFit
-        source: pictureUrl.Select_picture_URL()
-    }
+            property int k : 0
 
-    Text {
-        id: scoreText
-        x: 400; y:50
-        text: "Score: " + k
-        focus: true
-        Keys.onPressed:
-        {
-            //left key represents different
-            //right key represents same
+        Row {
+            id: row1
 
-            if (pictureUrl.Is_Same_pictures())
-            {
-               if (event.key === Qt.Key_Left)
-                {
-                   k--
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.Is_Same_pictures() +
-                                "and the left key is pressed")
-                }
-                else if(event.key === Qt.Key_Right)
-                {
-                    k++
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.Is_Same_pictures() +
-                                "and the right key is pressed");
-                }
-            }
-            else
-            {
-                if (event.key === Qt.Key_Left)
-                {
-                    k++
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.Is_Same_pictures() +
-                                "and the left key is pressed");
-                }
-                else if(event.key === Qt.Key_Right)
-                {
-                    k--
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.Is_Same_pictures() +
-                                "and the right key is pressed");
-                }
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            height: 200
+
+
+            Image {
+                id: image1
+                height: parent.height
+                fillMode: Image.PreserveAspectFit
+                source: pictureUrl.select_picture_URL()
             }
 
-            updateImages();
-
-
+            Image {
+                id: image2
+                height: parent.height
+                fillMode: Image.PreserveAspectFit
+                source: pictureUrl.select_picture_URL()
+            }
         }
     }
-
-    function updateImages() {
-        image1.source = image2.source;
-        image2.source = pictureUrl.Select_picture_URL();
-    }
 }
+
+//                Text {
+//                    id: scoreText
+//                    x: 400; y:50
+//                    text: "Score: " + k
+//                    focus: true
+//                    Keys.onPressed:
+//                    {
+//                        //left key represents different
+//                        //right key represents same
+
+//                        if (pictureUrl.is_Same_pictures())
+//                        {
+//                           if (event.key === Qt.Key_Left)
+//                            {
+//                               k--
+//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
+//                                            "and the left key is pressed")
+//                            }
+//                            else if(event.key === Qt.Key_Right)
+//                            {
+//                                k++
+//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
+//                                            "and the right key is pressed");
+//                            }
+//                        }
+//                        else
+//                        {
+//                            if (event.key === Qt.Key_Left)
+//                            {
+//                                k++
+//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
+//                                            "and the left key is pressed");
+//                            }
+//                            else if(event.key === Qt.Key_Right)
+//                            {
+//                                k--
+//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
+//                                            "and the right key is pressed");
+//                            }
+//                        }
+
+//                        updateImages();
+
+//                    }
+//                }
+//                }
+
+//    function updateImages() {
+//        image1.source = image2.source;
+//        image2.source = pictureUrl.select_picture_URL();
+//    }
+//}
+

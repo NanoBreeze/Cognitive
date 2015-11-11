@@ -7,14 +7,14 @@ PictureURL::PictureURL(QObject *parent) : QObject(parent),
 }
 
 //returns a the URL of a randomly selected picture
-QString PictureURL::Select_picture_URL()
+QString PictureURL::select_picture_URL()
 {
     PictureEnumeration pictureNumber = Select_enum_for_picture();
     Set_Picture_Order(pictureNumber);
     return Find_URL(pictureNumber);
 }
 
-bool PictureURL::Is_Same_pictures()
+bool PictureURL::is_same_pictures()
 {
     return (picture1 == picture2) ? true : false;
 }
