@@ -6,81 +6,163 @@ Window {
     id: window1
     visible: true
 
-    property int k : 0
+    property int score : 0
+    property int timeRemaining: 60
 
-    GridLayout {
-        id: gridLayout1
-        anchors.fill: parent
-        columns: 6
-        rows: 5
+ //Accessory objects
+    Image {id: correctOrWrongLoader
+    anchors.left: image2.right
+    anchors.top: image2.horizontalCenter
+    height: image2.height / 5
+    fillMode: Image.PreserveAspectFit
 
+    }
 
-        Image {
-            id: image1
-            Layout.row: 3
-            Layout.column: 3
-            Layout.maximumHeight: gridLayout1.height/5
-            Layout.maximumWidth: gridLayout1.width/6
-            source: pictureUrl.select_picture_URL()
+    Timer {
+        interval: 1000
+        running:true
+        repeat: true
+        onTriggered: {
+            timeRemaining--
+        }
+    }
+
+    //change the absolute positioning
+    Text {
+        text: "Time remaining: " + timeRemaining
+        x: 50; y: 120
+    }
+
+    Image {
+        id: image1
+        height : window1.height/10
+        fillMode: Image.PreserveAspectFit
+        source: pictureUrl.select_picture_URL()
+    }
+
+    Image {
+        id: image2
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        height: window1.height/2
+            fillMode: Image.PreserveAspectFit
+        source: pictureUrl.select_picture_URL()
+    }
+
+    Text {
+        id: scoreText
+        text: "Score: " + score;
+        anchors.top: parent.top
+        anchors.topMargin: window1.height/10
+        anchors.right: parent.right
+        anchors.rightMargin: window1.width/10
+        font.pointSize: 20
+        focus: true
+
+        Keys.onPressed:
+        {
+            //left key represents different
+            //right key represents same
+
+            if (pictureUrl.is_same_pictures())
+            {
+                if (event.key === Qt.Key_Left)
+                {
+                    wrongResponse()
+
+                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures()+
+                                "and the left key is pressed")
+                }
+                else if(event.key === Qt.Key_Right)
+                {
+                    correctResponse()
+
+                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures() +
+                                "and the right key is pressed");
+                }
+            }
+            else
+            {
+                if (event.key === Qt.Key_Left)
+                {
+                    correctResponse()
+
+                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures() +
+                                "and the left key is pressed");
+                }
+                else if(event.key === Qt.Key_Right)
+                {
+                    wrongResponse()
+
+                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures() +
+                                "and the right key is pressed");
+                }
+            }
+
+            updateImages();
+
         }
 
-        Image {
-            id: image2
-            Layout.row: 3
-            Layout.column: 4
-        Layout.maximumHeight: gridLayout1.height/5
-        Layout.maximumWidth: gridLayout1.width/6
-            source: pictureUrl.select_picture_URL()
-        }
+    }
+
+    Rectangle {
+        id: leftArrow
+        width: image2.width/3
+        height: window1.height/10
+        color: "red"
+        anchors.topMargin: window1.width/15
+        anchors.left: image2.left
+        anchors.top: image2.bottom
 
         Text {
-            id: sdoifosdifj
-            Layout.row: 2
-            Layout.column: 5
-            text: "Three";
-            font.bold: true;
-
-//            Keys.onPressed:
-//            {
-//                //left key represents different
-//                //right key represents same
-
-//                if (pictureUrl.is_same_pictures())
-//                {
-//                    if (event.key === Qt.Key_Left)
-//                    {
-//                        k--
-//                        console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                    "and the left key is pressed")
-//                    }
-//                    else if(event.key === Qt.Key_Right)
-//                    {
-//                        k++
-//                        console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                    "and the right key is pressed");
-//                    }
-//                }
-//                else
-//                {
-//                    if (event.key === Qt.Key_Left)
-//                    {
-//                        k++
-//                        console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                    "and the left key is pressed");
-//                    }
-//                    else if(event.key === Qt.Key_Right)
-//                    {
-//                        k--
-//                        console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                    "and the right key is pressed");
-//                    }
-//                }
-
-//                updateImages();
-
-//            }
-
+            text: "Different image"
+            width: parent.width
+            height: parent.height
+            font.pixelSize: parent.height * 0.4
+            wrapMode: Text.WordWrap
+            anchors.horizontalCenter:  parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
+
+    }
+
+
+    Rectangle {
+        id: rightArrow
+        width: image2.width/3
+        height: window1.height/10
+        color: "red"
+        anchors.topMargin: window1.width/15
+        anchors.right: image2.right
+        anchors.top: image2.bottom
+
+        Text {
+            text: "Same image"
+            width: parent.width
+            height: parent.height
+            font.pixelSize: parent.height * 0.4
+            wrapMode: Text.WordWrap
+            anchors.horizontalCenter:  parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+    }
+
+    function correctResponse() {
+        score++
+        scoreText.color = "green"
+        correctOrWrongLoader.source = "///checkmark.png"
+    }
+
+    function wrongResponse() {
+        score--
+        scoreText.color = "red"
+        correctOrWrongLoader.source = "///cross.png"
+
     }
 
     function updateImages() {
@@ -90,81 +172,3 @@ Window {
 
 
 }
-
-
-
-
-//   MainForm {
-//     id: mainForm1
-//   anchors.fill: parent.anchors
-
-
-
-
-
-//        Row {
-//            id: row1
-
-//            anchors.left: parent.left
-//            anchors.right: parent.right
-//            anchors.verticalCenter: parent.verticalCenter
-//            height: 200
-
-
-//        }
-//}
-//}
-
-//                Text {
-//                    id: scoreText
-//                    x: 400; y:50
-//                    text: "Score: " + k
-//                    focus: true
-//                    Keys.onPressed:
-//                    {
-//                        //left key represents different
-//                        //right key represents same
-
-//                        if (pictureUrl.is_Same_pictures())
-//                        {
-//                           if (event.key === Qt.Key_Left)
-//                            {
-//                               k--
-//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                            "and the left key is pressed")
-//                            }
-//                            else if(event.key === Qt.Key_Right)
-//                            {
-//                                k++
-//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                            "and the right key is pressed");
-//                            }
-//                        }
-//                        else
-//                        {
-//                            if (event.key === Qt.Key_Left)
-//                            {
-//                                k++
-//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                            "and the left key is pressed");
-//                            }
-//                            else if(event.key === Qt.Key_Right)
-//                            {
-//                                k--
-//                                console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_Same_pictures() +
-//                                            "and the right key is pressed");
-//                            }
-//                        }
-
-//                        updateImages();
-
-//                    }
-//                }
-//                }
-
-//    function updateImages() {
-//        image1.source = image2.source;
-//        image2.source = pictureUrl.select_picture_URL();
-//    }
-//}
-
