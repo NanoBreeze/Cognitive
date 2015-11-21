@@ -12,6 +12,7 @@ Window {
     property int totalWrong: 0
     property int timeRemaining: 5
 
+
     //Accessory objects
     Image {
         id: correctOrWrong
@@ -20,22 +21,17 @@ Window {
         anchors.verticalCenter: image2.verticalCenter
         fillMode: Image.PreserveAspectFit
 
-        NumberAnimation {
+        OpacityAnimator {
             id: animateOpacity
             target: correctOrWrong
-            properties: "opacity"
             from: 1.0
             to: 0
             duration: 300
         }
 
-
-        signal display(string url);
-
-        onDisplay: {
+        function display(url){
             source = url
             animateOpacity.start()
-
         }
 
     }
@@ -50,7 +46,8 @@ Window {
             if (timeRemaining === 0)
             {
                 timer.stop()
-                endGame_Animation.start()
+                endGame_rectangle.opacity = 1
+                scoreText.focus = false
             }
         }
     }
@@ -93,18 +90,12 @@ Window {
 
             onRunningChanged:
             {
-                if (!parallel_addOne.running)
-                {
-                    addOne.anchors.topMargin = 0
-                }
+                if (!parallel_addOne.running) { addOne.anchors.topMargin = 0 }
             }
 
 
         }
-        signal startAnimation()
-
-
-        onStartAnimation: {
+        function startAnimation() {
             parallel_addOne.start()
         }
     }
@@ -145,40 +136,80 @@ Window {
 
             onRunningChanged:
             {
-                if (!parallel_minusOne.running)
-                {
-                    minusOne.anchors.topMargin = -5
-                }
+                if (!parallel_minusOne.running) { minusOne.anchors.topMargin = -5 }
             }
         }
 
 
-        signal startAnimation()
-
-
-        onStartAnimation: {
+        function startAnimation() {
             parallel_minusOne.start()
         }
     }
 
-Rectangle {
-    id: endGame
-    width: window1.width * 0.8
-    height: window1.height * 0.8
+    Rectangle {
+        id: endGame_rectangle
+        width: window1.width
+        height: window1.height
+        z: 9999
 
-    y: window1.height
-    color: "grey"
-    opacity: 0.8
+        color: "grey"
+        opacity: 0.0
 
-    NumberAnimation {
-        id:endGame_Animation
-        target: endGame
-        property: "y"
-        to:window1.height*0.2
-        duration: 300
+        Text {
+            id:totalCorrect_text
+            text: "Total Correct: " + totalCorrect
+            anchors.topMargin: window1.height*-0.2
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Text {
+            id:totalWrong_text
+            text: "Total Wrong: " + totalWrong
+            anchors.top: totalCorrect_text.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
+            id:total_text
+            text: "Total: " + (totalCorrect + totalWrong)
+            anchors.top: totalWrong_text.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
+            id:totalScore_text
+            text: "Score: " + score
+            anchors.top: total_text.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Rectangle {
+            id: restart
+            anchors.top : totalScore_text.bottom
+            anchors.topMargin: parent.height/10
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width/3
+            height: parent.height/5
+            color: "green"
+
+            Text {
+                text: "Again!"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                font.pointSize: parent.height * 0.8
+            }
+
+            MouseArea {
+                anchors.fill : parent
+                onClicked:
+                {
+                    restartGame()
+                }
+            }
+        }
+
     }
-}
-
 
 
     //change the absolute positioning
@@ -252,23 +283,17 @@ Rectangle {
         Keys.onPressed:
         {
             parallelAnimation_image2_copy.start()
-            //left key represents different
-            //right key represents same
+            //left key represents different images
+            //right key represents same images
             if (pictureUrl.is_same_pictures())
             {
                 if (event.key === Qt.Key_Left)
                 {
                     wrongResponse()
-
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures()+
-                                "and the left key is pressed")
                 }
                 else if(event.key === Qt.Key_Right)
                 {
                     correctResponse()
-
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures() +
-                                "and the right key is pressed");
                 }
             }
             else
@@ -276,71 +301,34 @@ Rectangle {
                 if (event.key === Qt.Key_Left)
                 {
                     correctResponse()
-
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures() +
-                                "and the left key is pressed");
                 }
                 else if(event.key === Qt.Key_Right)
                 {
                     wrongResponse()
-
-                    console.log("The value of pictureUrl.Is_Same_pictures() is " + pictureUrl.is_same_pictures() +
-                                "and the right key is pressed");
                 }
             }
 
-            updateImages();
-
+            if ((event.key === Qt.Key_Left) || event.key === Qt.Key_Right)
+            {
+                updateImages();
+            }
         }
-
     }
 
-    Rectangle {
-        id: leftArrow
-        width: image2.width/3
-        height: window1.height/10
-        color: "red"
-        anchors.topMargin: window1.width/15
-        anchors.left: image2.left
-        anchors.top: image2.bottom
+Arrow{
+anchors.left: image2.left
+color: "red"
+textInArrow.text: "Different image"
 
-        Text {
-            text: "Different image"
-            width: parent.width
-            height: parent.height
-            font.pixelSize: parent.height * 0.4
-            wrapMode: Text.WordWrap
-            anchors.horizontalCenter:  parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
+}
 
-    }
+Arrow {
+    anchors.right: image2.right
+    color: "green"
+  textInArrow.text: "Same image"
 
+}
 
-    Rectangle {
-        id: rightArrow
-        width: image2.width/3
-        height: window1.height/10
-        color: "red"
-        anchors.topMargin: window1.width/15
-        anchors.right: image2.right
-        anchors.top: image2.bottom
-
-        Text {
-            text: "Same image"
-            width: parent.width
-            height: parent.height
-            font.pixelSize: parent.height * 0.4
-            wrapMode: Text.WordWrap
-            anchors.horizontalCenter:  parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-
-    }
 
     function correctResponse() {
         score++
@@ -360,5 +348,15 @@ Rectangle {
     function updateImages() {
         image1.source = image2.source;
         image2.source = pictureUrl.select_picture_URL();
+    }
+
+    function restartGame() {
+        scoreText.focus = true
+        score = 0
+        totalCorrect = 0
+        totalWrong = 0
+        timeRemaining = 5
+        endGame_rectangle.opacity = 0
+        timer.start()
     }
 }

@@ -4,7 +4,5 @@
         <file>beautifulScene.jpg</file>
         <file>checkmark.png</file>
         <file>error.png</file>
-        <file>correct.wav</file>
-        <file>corr.wav</file>
     </qresource>
 </RCC>
