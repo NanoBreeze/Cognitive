@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>MainForm.ui.qml</file>
         <file>Arrow.qml</file>
+        <file>ScoreAnimationText.qml</file>
     </qresource>
 </RCC>

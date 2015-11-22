@@ -4,11 +4,11 @@ Rectangle {
 
     property alias textInArrow : arrowText
 
-    width: image2.width/3
+    width: currentImage.width/3
     height: window1.height/10
     anchors.topMargin: window1.width/15
 
-    anchors.top: image2.bottom
+    anchors.top: currentImage.bottom
 
     Text {
         id: arrowText
