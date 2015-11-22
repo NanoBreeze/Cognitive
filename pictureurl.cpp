@@ -38,10 +38,13 @@ QString PictureURL::Find_URL(PictureEnumeration pictureNumber)
     switch(pictureNumber)
     {
     case PictureEnumeration::Picture0 :
-        url = "///NaturalScene2.jpg";
+        url = "///beautifulSunset.jpeg";
         break;
     case PictureEnumeration::Picture1:
-        url = "///beautifulScene.jpg";
+        url = "///beautifulEvening.jpeg";
+        break;
+    case PictureEnumeration::Picture2:
+        url = "///beautifulIsland.jpeg";
         break;
     default:
         throw QException::exception();

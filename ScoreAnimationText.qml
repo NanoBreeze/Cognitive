@@ -25,12 +25,14 @@ Text {
                 target: textId
                 from: 0
                 to: 1
+                easing: Easing.OutQuad
                 duration: 150
             }
             OpacityAnimator {
                 target: textId
                 from: 1
                 to: 0
+                easing: Easing.OutQuad
                 duration: 150 }
         }
 

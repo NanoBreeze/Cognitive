@@ -19,7 +19,7 @@ public:
 
 
 private:
-    const int total_number_of_image = 2;
+    const int total_number_of_image = 3;
     PictureEnumeration Select_enum_for_picture();
     QString Find_URL(PictureEnumeration pictureNumber);
     void Set_Picture_Order(PictureEnumeration pictureNumber);

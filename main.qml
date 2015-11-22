@@ -5,6 +5,11 @@ import QtMultimedia 5.0
 
 Window {
     id: window1
+    color: "#e5ffe5"
+    title: "Speed Match"
+    width: Screen.desktopAvailableWidth/2
+    height: Screen.desktopAvailableHeight/2
+
     visible: true
 
     //increments when user answers correctly and decrements more when user answers incorrectly
@@ -16,16 +21,21 @@ Window {
     //stores the number of wrong responses the user has put
     property int numberOfWrong: 0
 
+    //amount of time for each game
+    property int initialTimeRemaining: 20
+
     //time remaining until end of game
-    property int timeRemaining: 5
+    property int timeRemaining: 20
 
-
+    //determines when pressing the left and right arrow will check if the image is correct
+    //checking begins once the second image is shown, the first is always shown
+    property bool startGame: false
 
     //displays an image for a brief while to affirm if user's input was correct or wrong
     Image {
         id: correctOrWrongImage
         anchors.left: currentImage.right
-        height: currentImage.height / 5
+        height: currentImage.height / 3
         anchors.verticalCenter: currentImage.verticalCenter
         fillMode: Image.PreserveAspectFit
 
@@ -47,7 +57,6 @@ Window {
     Timer {
         id: timerToEndGame
         interval: 1000
-        running:true
         repeat: true
         onTriggered: {
             timeRemaining--
@@ -61,29 +70,28 @@ Window {
     }
 
     ScoreAnimationText {
-    id: addOne
-    anchors.top: scoreText.bottom
-    anchors.right: scoreText.right
-    color: "green"
-    text: "+25"
+        id: addOne
+        anchors.top: scoreText.bottom
+        anchors.right: scoreText.right
+        color: "green"
+        text: "+25"
 
-//sets nested properties in ScoreAnimationText
-    startMargin: 0
-    endMargin: -10
-}
+        //sets nested properties in ScoreAnimationText
+        startMargin: 0
+        endMargin: -10
+    }
 
     ScoreAnimationText {
-    id: minusOne
-    anchors.top: scoreText.bottom
-    anchors.right: scoreText.right
-    color: "red"
-    text: "-100"
+        id: minusOne
+        anchors.top: scoreText.bottom
+        anchors.right: scoreText.right
+        color: "red"
+        text: "-100"
 
-//sets nested properties in ScoreAnimationText
-    startMargin: -10
-    endMargin: 0
-}
-
+        //sets nested properties in ScoreAnimationText
+        startMargin: -10
+        endMargin: 0
+    }
 
     Rectangle {
         id: endGame_rectangle
@@ -91,7 +99,7 @@ Window {
         height: window1.height
         z: 9999
 
-        color: "grey"
+        color: "black"
         opacity: 0.0
 
 
@@ -105,10 +113,11 @@ Window {
             color: "green"
 
             Text {
-                text: "Again!"
+                text: "Play Again!"
+                color: "white"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                font.pointSize: parent.height * 0.6
+                font.pointSize: parent.height * 0.4
             }
 
             MouseArea {
@@ -128,36 +137,38 @@ Window {
 
             Text {
                 text: "Score: " + score
+                color: "white"
+                font.pointSize:  10
             }
 
             Text {
                 text: "Correct: " + numberOfCorrect + "/" + (numberOfCorrect + numberOfWrong)
+                color: "white"
+                font.pointSize:  10
             }
 
             Text{
-                text: "Percentage Correct: " + (numberOfCorrect/(numberOfCorrect + numberOfWrong))*100 + "%"
+                text: "Percentage Correct: " + Math.round((numberOfCorrect/(numberOfCorrect + numberOfWrong))*100) + "%"
+                color: "white"
+                font.pointSize:  10
             }
 
             Text{
-                text: "Average response time: " + (numberOfCorrect + numberOfWrong)/60 * 100 + "ms"
+                text: "Average response time: " + (((initialTimeRemaining)/(numberOfCorrect + numberOfWrong))*1000).toFixed(0) + "ms"
+                color: "white"
+                font.pointSize:  10
             }
         }
     }
-
 
     Text {
         text: "Time remaining: " + timeRemaining
-        anchors.left: window1.width/10
+        anchors.left: parent.left
         anchors.top: scoreText.top
+        anchors.leftMargin : window1.width/10
         font.pointSize: scoreText.font.pointSize
-    }
 
-        Image {
-            id: image1
-            height : window1.height/10
-            fillMode: Image.PreserveAspectFit
-            source: pictureUrl.select_picture_URL()
-        }
+    }
 
     Image {
         id: currentImage
@@ -182,14 +193,15 @@ Window {
             {
                 target:currentImage_copy
                 to: 0.4
-                duration: 150
+                easing: Easing.OutQuad
+                duration: 100
             }
 
             NumberAnimation {
                 target: currentImage_copy
                 property: "x"
                 to: currentImage_copy.x - currentImage_copy.width/3
-                duration: 150
+                duration: 100
             }
 
             onRunningChanged:
@@ -199,8 +211,6 @@ Window {
                     currentImage_copy.x = currentImage.x
                 }
             }
-
-
         }
     }
 
@@ -218,8 +228,19 @@ Window {
         {
             parallelAnimation_currentImage_copy.start()
 
-            if(isCorrect(event)===true) {correctResponse()}
-            else { wrongResponse() }
+            //if pressing the arrow keys checks current image with previous image
+            //if true, the game has yet to begin
+            if (startGame === true)
+            {
+                if(isCorrect(event)===true) {correctResponse()}
+                else { wrongResponse() }
+            }
+            else {
+                startGame = true
+                pressKeyToStart.opacity =0
+                timerToEndGame.running = true
+                timerToEndGame.start()
+            }
 
             if ((event.key === Qt.Key_Left) || event.key === Qt.Key_Right)
             {
@@ -228,18 +249,38 @@ Window {
         }
     }
 
-    Arrow{
-        anchors.left: currentImage.left
-        color: "red"
-        textInArrow.text: "Different image"
+    Rectangle {
+        id: pressKeyToStart
+        color: "black"
+        opacity: 0.7
+        width: window1.width
+        height: window1.height/5
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        Text {
 
+            text : "Press the left or right key to start"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pointSize: 15
+            color: "white"
+        }
     }
 
-    Arrow {
-        anchors.right: currentImage.right
-        color: "green"
-        textInArrow.text: "Same image"
+    Arrow{
+        id: leftArrow
+        anchors.left: currentImage.left
+        startColor: "red"
+        transitionColor:  "darkred"
+        textInArrow.text: "Different image"
+        }
 
+    Arrow {
+        id: rightArrow
+        anchors.right: currentImage.right
+        startColor: "green"
+        transitionColor: "darkgreen"
+        textInArrow.text: "Same image"
     }
 
 
@@ -259,7 +300,6 @@ Window {
     }
 
     function updateImages() {
-       image1.source = currentImage.source;
         currentImage.source = pictureUrl.select_picture_URL();
     }
 
@@ -268,35 +308,41 @@ Window {
         score = 0
         numberOfCorrect = 0
         numberOfWrong = 0
-        timeRemaining = 5
+        timeRemaining = initialTimeRemaining
         endGame_rectangle.opacity = 0
-        timerToEndGame.start()
+        startGame = false
+        pressKeyToStart.opacity = 0.7
+        timerToEndGame.running = false
     }
 
-function isCorrect(event) {
-    //left key represents different images
-    //right key represents same images
-    if (pictureUrl.is_same_pictures())
-    {
-        if (event.key === Qt.Key_Left)
+    function isCorrect(event) {
+        //left key represents different images
+        //right key represents same images
+        if (pictureUrl.is_same_pictures())
         {
-            return false
+            if (event.key === Qt.Key_Left)
+            {
+                leftArrow.startAnimation()
+                return false
+            }
+            else if(event.key === Qt.Key_Right)
+            {
+                rightArrow.startAnimation()
+                return true
+            }
         }
-        else if(event.key === Qt.Key_Right)
+        else
         {
-            return true
+            if (event.key === Qt.Key_Left)
+            {
+                leftArrow.startAnimation()
+                return true
+            }
+            else if(event.key === Qt.Key_Right)
+            {
+                rightArrow.startAnimation()
+                return false
+            }
         }
     }
-    else
-    {
-        if (event.key === Qt.Key_Left)
-        {
-            return true
-        }
-        else if(event.key === Qt.Key_Right)
-        {
-            return false
-        }
-    }
-}
 }

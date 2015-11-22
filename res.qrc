@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>NaturalScene2.jpg</file>
-        <file>beautifulScene.jpg</file>
         <file>checkmark.png</file>
         <file>error.png</file>
+        <file>beautifulEvening.jpeg</file>
+        <file>beautifulIsland.jpeg</file>
+        <file>beautifulSunset.jpeg</file>
     </qresource>
 </RCC>
